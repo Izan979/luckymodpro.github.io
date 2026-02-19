@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Mod Pro | Download Best Mods</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a1b9a;
+            --secondary: #4a148c;
+            --accent: #ffeb3b;
+            --bg: #f5f6fa;
+            --text-main: #2d3436;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; color: var(--text-main); padding-bottom: 80px; }
+
+        /* Header & Search */
+        header { background: var(--primary); padding: 20px 15px 40px; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: -20px; z-index: 100; }
+        .logo { color: white; font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 15px; }
+        .search-container { position: relative; max-width: 500px; margin: auto; }
+        .search-container input { width: 100%; padding: 15px 20px 15px 45px; border-radius: 15px; border: none; font-size: 16px; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
+
+        /* Main Content */
+        .container { max-width: 800px; margin: auto; padding: 15px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 20px 10px 15px; }
+        .section-header h2 { font-size: 18px; color: #444; margin: 0; border-left: 4px solid var(--primary); padding-left: 10px; }
+
+        /* App Grid Layout */
+        .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .app-card { background: white; padding: 15px 10px; border-radius: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: 0.3s; position: relative; overflow: hidden; }
+        .app-card:active { transform: scale(0.92); background: #fafafa; }
+        .app-card img { width: 70px; height: 70px; border-radius: 18px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px; }
+        .app-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .app-cat { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Download Overlay Page */
+        #dlPage { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .dl-icon { width: 100px; height: 100px; border-radius: 25px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        #timerBox { font-size: 20px; font-weight: bold; color: var(--primary); margin: 20px 0; }
+        .progress-bar { width: 200px; height: 6px; background: #eee; border-radius: 10px; overflow: hidden; margin-bottom: 30px; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 1s linear; }
+        
+        .dl-btn { background: var(--primary); color: white; padding: 18px 50px; border-radius: 40px; text-decoration: none; font-weight: bold; font-size: 18px; display: none; box-shadow: 0 5px 20px rgba(106, 27, 154, 0.4); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 500; }
+        .nav-link { color: #888; text-decoration: none; text-align: center; font-size: 11px; }
+        .nav-link.active { color: var(--primary); }
+        .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        /* Loading */
+        #loader { text-align: center; padding: 50px; font-style: italic; color: #888; }
+    </style>
+</head>
+<body>
+
+<div id="dlPage">
+    <button onclick="closeDl()" style="position:absolute; top:30px; right:30px; background:none; border:none; font-size:24px; color:#ccc;"><i class="fa fa-times"></i></button>
+    <img id="dlImg" src="" class="dl-icon">
+    <h2 id="dlTitle" style="margin:0 0 5px;">App Name</h2>
+    <p style="color:#888; margin-bottom: 20px;">Your request is being processed...</p>
+    
+    <div id="timerBox">Wait 10s...</div>
+    <div class="progress-bar"><div class="progress-fill" id="pFill"></div></div>
+
+    <div style="width:300px; height:250px; background:#f0f0f0; border:2px dashed #ddd; margin-bottom:20px; display:flex; align-items:center; justify-content:center; color:#999; border-radius:15px;">
+        Advertisement Slot
+    </div>
+
+    <a href="" id="realDlBtn" class="dl-btn" target="_blank">Download Now</a>
+</div>
+
+<header>
+    <div class="logo">LUCKY MOD PRO</div>
+    <div class="search-container">
+        <i class="fa fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search mods, games, apps..." onkeyup="filterApps()">
+    </div>
+</header>
+
+<div class="container">
+    <div id="loader"><i class="fas fa-circle-notch fa-spin"></i> Loading Premium Mods...</div>
+
+    <div id="appsSection" style="display:none;">
+        <div class="section-header">
+            <h2>Recommended Apps</h2>
+        </div>
+        <div class="app-grid" id="appContainer"></div>
+
+        <div class="section-header" style="margin-top: 30px;">
+            <h2>Trending Games</h2>
+        </div>
+        <div class="app-grid" id="gameContainer"></div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <a href="#" class="nav-link active"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="#" class="nav-link"><i class="fa-solid fa-gamepad"></i>Games</a>
+    <a href="#" class="nav-link"><i class="fa-solid fa-fire"></i>Trending</a>
+    <a href="#" class="nav-link"><i class="fa-solid fa-circle-info"></i>About</a>
+</div>
+
+<script>
+    const firebaseURL = "https://minhaz-chat-d2f6b-default-rtdb.firebaseio.com/lucky_mod_apps.json";
+    let allApps = [];
+
+    async function fetchApps() {
+        try {
+            const response = await fetch(firebaseURL);
+            const data = await response.json();
+            
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('appsSection').style.display = 'block';
+
+            if (!data) return;
+
+            // ডাটাকে অ্যারেতে রূপান্তর করা
+            allApps = Object.keys(data).map(id => ({ id, ...data[id] })).reverse();
+            renderApps(allApps);
+
+        } catch (e) {
+            document.getElementById('loader').innerHTML = "Check Connection!";
+        }
+    }
+
+    function renderApps(dataList) {
+        const appGrid = document.getElementById('appContainer');
+        const gameGrid = document.getElementById('gameContainer');
+        
+        appGrid.innerHTML = '';
+        gameGrid.innerHTML = '';
+
+        dataList.forEach(app => {
+            const card = `
+                <div class="app-card" onclick="openDownload('${app.name}', '${app.icon}', '${app.link}')">
+                    <img src="${app.icon}">
+                    <div class="app-name">${app.name}</div>
+                    <div class="app-cat">${app.category}</div>
+                </div>
+            `;
+
+            if(app.category === 'Apps') appGrid.innerHTML += card;
+            else gameGrid.innerHTML += card;
+        });
+    }
+
+    function filterApps() {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allApps.filter(app => app.name.toLowerCase().includes(term));
+        renderApps(filtered);
+    }
+
+    // ডাউনলোড টাইমার লজিক
+    let countInterval;
+    function openDownload(name, icon, link) {
+        document.getElementById('dlPage').style.display = 'flex';
+        document.getElementById('dlImg').src = icon;
+        document.getElementById('dlTitle').innerText = name;
+        document.getElementById('realDlBtn').style.display = 'none';
+        document.getElementById('timerBox').style.display = 'block';
+        
+        let timeLeft = 10;
+        const pFill = document.getElementById('pFill');
+        pFill.style.width = '0%';
+        document.getElementById('timerBox').innerText = `Wait ${timeLeft}s...`;
+
+        countInterval = setInterval(() => {
+            timeLeft--;
+            let progress = ((10 - timeLeft) / 10) * 100;
+            pFill.style.width = progress + '%';
+            
+            if(timeLeft > 0) {
+                document.getElementById('timerBox').innerText = `Wait ${timeLeft}s...`;
+            } else {
+                clearInterval(countInterval);
+                document.getElementById('timerBox').style.display = 'none';
+                const btn = document.getElementById('realDlBtn');
+                btn.href = link;
+                btn.style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    function closeDl() {
+        document.getElementById('dlPage').style.display = 'none';
+        clearInterval(countInterval);
+    }
+
+    window.onload = fetchApps;
+</script>
+
+</body>
+</html>
